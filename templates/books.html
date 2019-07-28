@@ -9,13 +9,11 @@
     <div class=container>
         <div class="card">
             <div class="card-header">
-                Hello, your logged in as {{ user }}
+                Hello, your logged in as <b>{{ user.name | capitalize }}</b>
             </div>
             <div class="card-body">
-                <h5 class="card-title">{% if password %}Your password is:{% else %}You do not have a password!{% endif %}</h5>
-                <p class="card-text">{% if password %}{{ password }}</p>
+                <h5 class="card-title">Your email is <b>{{ user.email }}</b></h5>
             </div>
         </div>
-        {% endif %}
     </div>
 {% endblock %}
