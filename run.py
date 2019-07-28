@@ -28,9 +28,9 @@ def goto_login():
 @app.route('/login', methods=['GET', 'POST'])
 def index():
     form = LoginForm()
-    if form.validate_on_submit() is True:
-        # write to session (key : value pairs)
-        session['email'] = form.email.data
+    if form.validate_on_submit() is True: 
+        # write to session (key : value pairs) 
+        session['email'] = form.email.data 
         session['password'] = form.password.data
         return redirect(url_for('index'))
     # post/redirect/get
@@ -51,10 +51,18 @@ def register():
         session['password'] = form.password.data
         return redirect(url_for('register'))
 
+
     return render_template('register.html', form=form, 
                         name=session.get('name'),
                         email=session.get('email'),
                         password=session.get('password'))
+
+@app.route('/logout/')
+def logout():
+    session.pop('email')
+    session.pop('name')
+
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run()
