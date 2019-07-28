@@ -14,3 +14,4 @@ env
 .env
 venv
 _run.py
+/*_session/

@@ -7,31 +7,31 @@
 
 {% block body %}
     <div class=container>
-        <form action="{{ url_for('index') }}" method="POST">
+        <form action="{{ url_for('login') }}" method="POST">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.email.label() }}
-                {{ form.email(type="email", class="form-control", id="exampleInputEmail1", placeholder="Enter email") }}
+
+                {% if session.get('loginer') is none %}
+                    {{ form.email(type="email", class="form-control", id="exampleInputEmail1", placeholder="Enter email") }}
+                {% else %}
+                    {{ form.email(type="email", class="form-control", id="exampleInputEmail1", value=session.get('loginer')) }}
+                {% endif %}
+
+                {% if not_registered %}
+                    <small id="emailHelp" class="form-text text-muted"><font color="red">email not found.</font></small>
+                {% endif %}
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div class="form-group">
                 {{ form.password.label() }}
                 {{ form.password(type="password", class="form-control", id="exampleInputPassword1", placeholder="Password") }}
+                {% if wrong_password %}
+                    <small id="emailHelp" class="form-text text-muted"><font color="red">Incorrect password.</font></small>
+                {% endif %}
             </div>
             {{ form.submit(class="btn btn-primary") }}
             <small id="emailHelp" class="form-text text-muted">Do not have an account? Click <a href="/register/">Here</a> to create one!.</small>
         </form>
-    </div>
-    <div class=container>
-        <div class="card">
-            <div class="card-header">
-                Hello, your email is {% if email %}{{ email }}{% else %}Stranger!{% endif %}
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{% if password %}Your password is:{% else %}You do not have a password!{% endif %}</h5>
-                <p class="card-text">{% if password %}{{ password }}</p>
-            </div>
-        </div>
-        {% endif %}
     </div>
 {% endblock %}

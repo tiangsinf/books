@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set active_page = "home" %}
+
+{% block title %}
+    Books
+{% endblock %}
+
+{% block body %}
+    <div class=container>
+        <div class="card">
+            <div class="card-header">
+                Hello, your logged in as <b>{{ user.name | capitalize }}</b>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Your email is <b>{{ user.email }}</b></h5>
+            </div>
+        </div>
+    </div>
+{% endblock %}
