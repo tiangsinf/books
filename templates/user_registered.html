@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% set active_page = "Register" %}
+
+{% block title %}
+    Email Registered
+{% endblock %}
+
+{% block body %}
+    <div class=container>
+        <div class="card">
+            <div class="card-header">
+                Thank you {{ name }};<br>
+                Your registration is successful. Your login email is <b>{{ email }}</b>.
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Click <a href="/login">HERE</a> to login.</h5>
+            </div>
+        </div>
+    </div>
+{% endblock %}

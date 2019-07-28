@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% set active_page = "Register" %}
+
+{% block title %}
+    Email Registered
+{% endblock %}
+
+{% block body %}
+    <div class=container>
+        <div class="card">
+            <div class="card-header">
+                <b>{{ email }} </b>is an existing email.
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Have an account? Click <a href="/login">HERE</a> to sign-in instead.</h5>
+            </div>
+        </div>
+    </div>
+   {% endblock %}

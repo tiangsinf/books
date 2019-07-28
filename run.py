@@ -23,9 +23,6 @@ def make_shell_context():
 from forms import LoginForm, RegistrationForm
 @app.route('/')
 def goto_login():
-    if session['SESSIONUSER'] is None:
-        return redirect(url_for('login'))
-    
     return redirect(url_for('books'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -73,7 +70,7 @@ def login():
 
 @app.route('/books')
 def books():
-    if session['SESSIONUSER'] is None:
+    if not session.get('SESSIONUSER'):
         return redirect(url_for('login'))
 
     return render_template('books.html', user = session.get('SESSIONUSER'))
@@ -82,6 +79,43 @@ def books():
 def logout():
     session.pop('SESSIONUSER', None)
     return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+
+    form = RegistrationForm()
+    
+    if request.method == 'POST':
+        session['name'] = form.name.data
+        session['email'] = form.email.data
+        session['password'] = form.password.data
+
+        # Check if email exist:
+        user = User.query.filter_by(email=session.get('email')).scalar()
+
+        if user is None:
+            new_user = User(session.get('name'), session.get('email'), session.get('password'))
+            db.session.add(new_user)
+            db.session.commit()
+            if User.query.filter_by(email=session.get('email')).scalar():
+                return redirect('success')
+            else:
+                return redirect('fail')
+            
+        return redirect('used_email')
+
+    return render_template(
+        'register.html',
+        form=form
+    )
+
+@app.route('/used_email')
+def used_email():
+    return render_template('user_exist.html', email=session.get('email'))
+
+@app.route('/success')
+def success():
+    return render_template('user_registered.html', name=session.get('name'), email=session.get('email'))    
 
 if __name__ == '__main__':
     app.run()

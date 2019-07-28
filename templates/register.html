@@ -19,14 +19,28 @@
             </div>
             <div class="form-group">
                 {{ form.password.label() }}
-                {{ form.password(type="password", class="form-control", id="exampleInputPassword1", placeholder="Create Password") }}
+                {{ form.password(type="password", class="form-control", id="password", placeholder="Create Password") }}
             </div>
             <div class="form-group">
                 {{ form.confirm_password.label() }}
-                {{ form.confirm_password(type="password", class="form-control", id="exampleInputPassword1", placeholder="Repeat Password") }}
+                {{ form.confirm_password(type="password", class="form-control", id="confirm_password", placeholder="Repeat Password") }}
+                <script language='javascript' type='text/javascript'>
+                    var password = document.getElementById("password")
+                    , confirm_password = document.getElementById("confirm_password");
+                  
+                    function validatePassword(){
+                      if(password.value != confirm_password.value) {
+                        confirm_password.setCustomValidity("Passwords Don't Match");
+                      } else {
+                        confirm_password.setCustomValidity('');
+                      }
+                    }
+  
+                    password.onchange = validatePassword;
+                    confirm_password.onkeyup = validatePassword;
+                </script>
             </div>
             {{ form.submit(class="btn btn-primary") }}
         </form>
-        {{ name }}.{{ email }}.{{ password }}
     </div>
 {% endblock %}
