@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}
+    Book(s) by {{ author | capitalize }}
+{% endblock %}
+
+{% block body %}
+<div class=container>
+    <div class="card">
+        <div class="card-header">
+            Books by <b>{{ author | capitalize }}: {{ books.total }}</b>; 
+        </div>
+        <div class="card-body">
+            <ul>
+                {% for book in books %}
+                <li>ISBN: {{ book.isbn }}</li>
+                <li>Title: {{ book.title }}</li>
+                <li>Year: {{ book.year }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{{ author }}
+{% endblock %}

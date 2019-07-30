@@ -18,9 +18,9 @@ Session(app)
 from models import *
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, User=User)
+    return dict(app=app, db=db, User=User, Book=Book)
 
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, SearchForm
 @app.route('/')
 def goto_login():
     return redirect(url_for('books'))
@@ -72,8 +72,32 @@ def login():
 def books():
     if not session.get('SESSIONUSER'):
         return redirect(url_for('login'))
+    
+    form = SearchForm()
+    
+    page = request.args.get('page', 1, type=int)
+    books = Book.query.order_by(Book.title).paginate(
+        page,
+        app.config['POST_PER_PAGE'],
+        False
+    )
 
-    return render_template('books.html', user = session.get('SESSIONUSER'))
+    return render_template(
+        'books.html', 
+        user=session.get('SESSIONUSER'), 
+        form=form,
+        books=books.items,
+        pages = books.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2)
+    )
+
+#! START HERE!
+@app.route('/books/<string:author>')
+def book_author(author):
+    page = request.args.get('page', 1, type=int)
+    author = Book.query.filter_by(author=author).first_or_404()
+    books = Book.query.filter(Book.author==author).all()
+    
+    render_template('author_books.html', author=author)
 
 @app.route('/logout/')
 def logout():

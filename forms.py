@@ -19,3 +19,10 @@ class RegistrationForm(FlaskForm):
     )
     confirm_password = PasswordField('Confirm Password', validators=[EqualTo(password, message='Password must match!')])
     submit = SubmitField('Submit')
+
+class SearchForm(FlaskForm):
+    isbn = StringField('Search by ISBN No.')
+    title = StringField("Search by Book's Title")
+    author = StringField("Search by Author's Name")
+    year = StringField('Year')
+    submit = SubmitField('Search')

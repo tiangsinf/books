@@ -6,6 +6,7 @@ class Config:
     SESSION_PERMANENT = False
     SESSION_TYPE = 'filesystem'
     SECRET_KEY = os.getenv('SECRET_KEY')
+    POST_PER_PAGE = 10
 
 class DevConfig(Config):
     DEBUG = True
