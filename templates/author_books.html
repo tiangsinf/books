@@ -4,21 +4,32 @@
 {% endblock %}
 
 {% block body %}
-<div class=container>
-    <div class="card">
-        <div class="card-header">
-            Books by <b>{{ author | capitalize }}: {{ books.total }}</b>; 
-        </div>
-        <div class="card-body">
-            <ul>
-                {% for book in books %}
-                <li>ISBN: {{ book.isbn }}</li>
-                <li>Title: {{ book.title }}</li>
-                <li>Year: {{ book.year }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+    {{ super() }}
+    <div class="container">
+        <button type="button" class="btn btn-primary">
+            <small><span class="badge badge-light">{{ books.total }}</span> book(s) by {{ author }}</small>
+        </button>
     </div>
-</div>
-{{ author }}
+    {% include "results.html" %}
+    <div class="container">
+    <nav>
+        <ul class="pagination">
+            {% for page in books.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=3) %}
+                {% if page %}
+                    {% if books.page == page %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="{{ url_for('author', author=author, page=page) }}">{{ page }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('author', author=author, page=page) }}">{{ page }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    ...
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+    </div>
 {% endblock %}

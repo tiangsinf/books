@@ -10,34 +10,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for book in books %}    
+            {% for book in books.items %}    
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <td><a href="/books/isbn">{{ book.isbn }}</a></td>
-                    <td><a href="/books/isbn">{{ book.title }}</a></td>
-                    <td><a href="{{ url_for('book_author', author=book.author) }}">{{ book.author }}</a></td> 
+                    <td><a href="{{ url_for('book_isbn', book_isbn=book.isbn) }}">{{ book.isbn }}</a></td>
+                    <td><a href="{{ url_for('book_isbn', book_isbn=book.isbn) }}">{{ book.title }}</a></td>
+                    <td><a href="{{ url_for('author', author=book.author) }}">{{ book.author }}</a></td> 
                     <td>{{ book.year }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            {% for page_num in pages %}
-                {% if page_num %}
-                    {% if books.page == page_num %}
-                        <li class="page-item active">
-                            <a class="page-link" href="{{ url_for('books', page=page_num) }}">{{ page_num }}<span class="sr-only">(current)</span></a>
-                        </li>
-                    {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('books', page=page_num) }}">{{ page_num }}</a>
-                        </li>
-                    {% endif %}
-                {% else %}
-                    ...
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </nav>
 </div>

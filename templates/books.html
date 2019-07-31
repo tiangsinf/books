@@ -6,39 +6,27 @@
 {% endblock %}
 
 {% block body %}
-    <div class=container>
-        <div class="card">
-            <div class="card-header">
-                Hello <b>{{ user.name | capitalize }}</b>, welcome back to Books!<br>
-                <small>search for information of your favorite book below:</small> 
-            </div>
-            <div class="card-body">
-                <!--search form-->
-                <form action="" method="post">
-                    {{ form.hidden_tag() }}
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            {{ form.title.label() }}
-                            {{ form.title(class="form-control", type="text", placeholder="ISBN Number") }}                
-                        </div>
-                        <div class="form-group col-md-6">
-                            {{ form.author.label() }}
-                            {{ form.author(class="form-control", type="text", placeholder="Book's Title") }}                
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            {{ form.isbn.label() }}
-                            {{ form.isbn(class="form-control", type="text", placeholder="Author") }}                
-                        </div>
-                        <div class="form-group col-md-6">
-                            {{ form.year.label() }}
-                            {{ form.year(class="form-control", type="text", placeholder="Published's Year") }}
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {{ super() }}
     {% include "results.html" %}
+    <div class="container">
+    <nav>
+        <ul class="pagination">
+            {% for page in books.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=3) %}
+                {% if page %}
+                    {% if books.page == page %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="{{ url_for('books', author=author, page=page) }}">{{ page }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('books', author=author, page=page) }}">{{ page }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    ...
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+    </div>
 {% endblock %}

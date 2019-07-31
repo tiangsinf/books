@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}
+    Book - :{{ book.title }}
+{% endblock %}
+
+{% block body %}
+<div class=container>
+    <div class="card">
+        <div class="card-header">
+            <b><h4>{{ book.title | capitalize }}</h4></b>
+            <small>{{ book.isbn }}</small>
+        </div>
+        <div class="card-body">
+            <h5>Author: {{ book.author }}</h5>
+            <h5>Published: {{ book.year }}</h5>
+        </div>
+    </div>
+</div>
+{% endblock %}
