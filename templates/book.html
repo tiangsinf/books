@@ -4,16 +4,83 @@
 {% endblock %}
 
 {% block body %}
-<div class=container>
-    <div class="card">
-        <div class="card-header">
-            <b><h4>{{ book.title | capitalize }}</h4></b>
-            <small>{{ book.isbn }}</small>
-        </div>
-        <div class="card-body">
-            <h5>Author: {{ book.author }}</h5>
-            <h5>Published: {{ book.year }}</h5>
+    <div class=container>
+        <div class="card">
+            <div class="card-header">
+                <b><h4>{{ book.title | title }}</h4></b>
+                <small>{{ book.isbn }}</small>
+            </div>
+            <div class="card-body">
+                <h5>Author: {{ book.author }}</h5>
+                <h5>Published: {{ book.year }}</h5>
+            </div>
         </div>
     </div>
-</div>
+    <!--reviews-->
+    <div class="container">
+        <div class="col-md-12">
+            <h5>What others say about <i><b>{{ book.title | title }}</b></i></h5>
+        </div>
+        <div class="float-right">
+            <a class="btn btn-primary" href="{{ url_for('user_review', book_id=book.id) }}" role="button">Post New Review</a>
+        </div>
+        <br>
+        <br>
+        <div class="one-review">
+            {% for review in reviews_pages.items %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><b>{{ review.user.name }}</b></p>
+                    </div>
+                    <div class="col-md-6 text-success">
+                        <small>{{ review.review_date | formatdatetime }}</small>
+                    </div>
+                </div>
+                <div class="row text-success">
+                    <div class="col-md-12">
+                        {% if review.rating == 1 %}
+                            <i class="fa fa-star"></i>
+                        {% elif review.rating == 2 %}
+                            <i class="fa fa-star"></i><i class="fa fa-star"></i>
+                        {% elif review.rating == 3 %}
+                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                        {% elif review.rating == 4 %}
+                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                        {% elif review.rating == 5 %}
+                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                        {% else %}
+                            <b>{{ review.user.name }}</b> has not given any rating
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-12">
+                        <p>{{ review.review }}</p>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+        <div class="container">
+            <nav>
+                <ul class="pagination">
+                    {% for page in reviews_pages.iter_pages() %}
+                        {% if page %}
+                            {% if reviews_pages.page == page %}
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="{{ url_for('book_isbn', book_isbn=book.isbn, page=page) }}">{{ page }}<span class="sr-only">(current)</span></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('book_isbn', book_isbn=book.isbn, page=page) }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            ...
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
 {% endblock %}

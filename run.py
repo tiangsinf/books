@@ -25,11 +25,11 @@ if not os.getenv('FLASK_APP'):
 from models import *
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Book=Book)
+    return dict(app=app, db=db, User=User, Book=Book, Review=Review)
 
 # 1.0 HOME ROUTE
 # user not logged in
-from forms import LoginForm, RegistrationForm, SearchForm
+from forms import LoginForm, RegistrationForm, SearchForm, ReviewForm
 @app.route('/')
 def goto_login():
     return redirect(url_for('books'))
@@ -68,7 +68,7 @@ def login():
         # All matched
         else:
             # Set user to session user:
-            session['SESSIONUSER'] = user
+            session['SESSIONUSER'] = user.id
             return redirect(url_for('books')) 
     
     return render_template(
@@ -140,17 +140,15 @@ def books():
     # user logged in
     # render search form
     form = SearchForm()
-    
+    user = User.query.get(session.get('SESSIONUSER'))
     # list all books with pagination
     page = request.args.get('page', 1, type=int) # grab page from URL
     books = Book.query.order_by(Book.title).paginate(
         page = page,
-        per_page = app.config['POST_PER_PAGE']
+        per_page = app.config['ITEMS_PER_PAGE']
     )
 
-    href_url = "\{\{ url_for('author', author=author, page=page) \}\}"
-
-    return render_template('books.html', user=session.get('SESSIONUSER'), form=form, books=books, href_url=href_url)
+    return render_template('books.html', user=user, form=form, books=books)
 
 # 3.1 GET BOOKS FROM AUTHOR
 # if user click on author name from /books -> list all books from author:
@@ -168,9 +166,8 @@ def author(author):
 
     # fetch books by author
     books = Book.query.filter_by(author=author).order_by(Book.year.desc()).paginate(
-        page,
-        app.config['POST_PER_PAGE'],
-        False
+        page = page,
+        per_page = app.config['ITEMS_PER_PAGE']
     )
 
     return render_template('author_books.html', 
@@ -181,13 +178,54 @@ def author(author):
 
 # 3.2 GET BOOK BY ISBN
 # if user click on book title or book isbn number from /books -> render book info and user comments
+
+def format_datetime(value, format="%d %b %Y %I:%M %p"):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ''
+    return value.strftime(format)
+
+app.jinja_env.filters['formatdatetime'] = format_datetime
+
 @app.route('/isbn/<string:book_isbn>')
 def book_isbn(book_isbn):
     
+    page = request.args.get('page', 1, type=int)
     # checks if author exists
     book = Book.query.filter_by(isbn=book_isbn).first_or_404()
-    
-    return render_template('book.html', book=book)
+    reviews = book.comments.order_by(Review.review_date.desc())
+    return render_template(
+        'book.html', 
+        book=book, 
+        reviews=reviews.all(),
+        reviews_pages=reviews.paginate(page=page, per_page=5)
+        )
+
+@app.route('/user_review/<int:book_id>', methods=['GET', 'POST'])
+def user_review(book_id):
+    form = ReviewForm()
+    session['book'] = Book.query.get(book_id)
+
+    if request.method == 'POST':
+        session['review'] = form.review.data
+        session['rating'] = form.rating.data
+        
+        review = Review(
+            session.get('review'), 
+            session.get('rating'),
+        )
+
+        user = User.query.get(session.get('SESSIONUSER'))
+        review.user = user
+        review.book = session.get('book')
+
+        db.session.add(review)
+        db.session.commit()
+
+        return redirect(url_for('book_isbn', book_isbn=session.get('book').isbn))
+
+    return render_template('user_review.html', form=form, book=session.get('book'))
 
 if __name__ == '__main__':
     app.run()
+

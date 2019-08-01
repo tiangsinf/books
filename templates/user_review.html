@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}
+    Book - :{{ book.title }}
+{% endblock %}
+
+{% block body %}
+    <div class=container>
+        <div class="card">
+            <div class="card-header">
+                <b><h4>{{ book.title | title }}</h4></b>
+                <small>{{ book.isbn }}</small>
+            </div>
+            <div class="card-body">
+                <h5>Author: {{ book.author }}</h5>
+                <h5>Published: {{ book.year }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class=container>
+        <form action="{{ url_for('user_review', book_id=book.id) }}" method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.rating.label() }}
+                {{ form.rating() }}
+            </div>
+            <div class="form-group">
+                {{ form.review.label() }}
+                {{ form.review(class="form-control", rows="5") }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+    {{ user }}
+{% endblock %}

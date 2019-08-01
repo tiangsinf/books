@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 class LoginForm(FlaskForm):
@@ -26,3 +26,18 @@ class SearchForm(FlaskForm):
     author = StringField("Search by Author's Name")
     year = StringField('Year')
     submit = SubmitField('Search')
+
+class ReviewForm(FlaskForm):
+    review = TextAreaField('What do you think...', validators = [DataRequired()])
+    rating = SelectField(
+        'Your Rating',
+        choices = [
+            (1, 1),
+            (2, 2),
+            (3, 3),
+            (4, 4),
+            (5, 5)
+        ],
+        validators = [DataRequired()]
+    )
+    submit = SubmitField('Submit')
