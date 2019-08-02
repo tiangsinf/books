@@ -1,0 +1,3 @@
+1. Good read API
+2. Document codes with comments
+3. Improve result route to handle case sensitive issue when searching

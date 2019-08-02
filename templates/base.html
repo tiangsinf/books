@@ -62,28 +62,46 @@
             </div>
             <div class="card-body">
                 <!--search form-->
-                <form action="" method="post">
+                <form action="{{ url_for('books') }}" method="post">
                     {{ form.hidden_tag() }}
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             {{ form.title.label() }}
-                            {{ form.title(class="form-control", type="text", placeholder="ISBN Number") }}                
+                            {% if session.get("q_title") %}
+                                {{ form.title(class="form-control", type="text", value=session.get("q_title")) }}
+                            {% else %}
+                                {{  form.title(class="form-control", type="text", placeholder="Title") }}
+                            {% endif %}     
                         </div>
                         <div class="form-group col-md-6">
                             {{ form.author.label() }}
-                            {{ form.author(class="form-control", type="text", placeholder="Book's Title") }}                
+                            {% if session.get("q_author") %}
+                                {{ form.author(class="form-control", type="text", value=session.get("q_author")) }}
+                            {% else %}
+                                {{ form.author(class="form-control", type="text", placeholder="Author") }}
+                            {% endif %}                
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             {{ form.isbn.label() }}
-                            {{ form.isbn(class="form-control", type="text", placeholder="Author") }}                
+                            {% if session.get("q_isbn") %}
+                                {{ form.isbn(class="form-control", type="text", value=session.get("q_author")) }}
+                            {% else %}
+                                {{ form.isbn(class="form-control", type="text", placeholder="ISBN Number") }}
+                            {% endif %}          
                         </div>
                         <div class="form-group col-md-6">
                             {{ form.year.label() }}
-                            {{ form.year(class="form-control", type="text", placeholder="Published's Year") }}
+                            {% if session.get("q_year") %}
+                                {{ form.year(class="form-control", type="text", value=session.get("q_year")) }}
+                            {% else %}
+                                {{ form.year(class="form-control", type="text", placeholder="Published Year (e.g 2006)") }}
+                            {% endif %}
                         </div>
                     </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a class="btn btn-primary" href="/books" role="button">Reset</a>
                 </form>
             </div>
         </div>

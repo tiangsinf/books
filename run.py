@@ -130,7 +130,7 @@ def success():
     return render_template('user_registered.html', name=session.get('name'), email=session.get('email'))    
 
 # 3.0 DEFAULT PAGE FOR LOGGED-IN USER
-@app.route('/books')
+@app.route('/books', methods=['GET', 'POST'])
 def books():
 
     # if user not logged in, redirect to login page
@@ -143,12 +143,44 @@ def books():
     user = User.query.get(session.get('SESSIONUSER'))
     # list all books with pagination
     page = request.args.get('page', 1, type=int) # grab page from URL
+
     books = Book.query.order_by(Book.title).paginate(
         page = page,
         per_page = app.config['ITEMS_PER_PAGE']
     )
 
+    session.pop('q_title', None)
+    session.pop('q_author', None)
+    session.pop('q_isbn', None)
+    session.pop('q_year', None)
+
+    if request.method == 'POST':
+        session['q_title'] = form.title.data
+        session['q_author'] = form.author.data
+        session['q_isbn'] = form.isbn.data
+        session['q_year'] = form.year.data
+        
+        return redirect(url_for('results'))
+
     return render_template('books.html', user=user, form=form, books=books)
+
+from sqlalchemy import func
+@app.route('/results')
+def results():
+    form = SearchForm()
+    user = User.query.get(session.get('SESSIONUSER'))
+    page = request.args.get('page', 1, type=int)
+    books = Book.query \
+        .filter(func.lower(Book.title).contains(func.lower(f"{session.get('q_title')}"))) \
+        .filter(Book.author.contains(f"{session.get('q_author')}")) \
+        .filter(Book.isbn.contains(f"{session.get('q_isbn')}")) \
+        .filter(Book.year == session.get('q_year')) \
+        .order_by(Book.title) \
+        .paginate(
+            page = page,
+            per_page = app.config['ITEMS_PER_PAGE']
+        )        
+    return render_template('search.html', user=user, form=form, books=books)
 
 # 3.1 GET BOOKS FROM AUTHOR
 # if user click on author name from /books -> list all books from author:
@@ -225,6 +257,8 @@ def user_review(book_id):
         return redirect(url_for('book_isbn', book_isbn=session.get('book').isbn))
 
     return render_template('user_review.html', form=form, book=session.get('book'))
+
+
 
 if __name__ == '__main__':
     app.run()
